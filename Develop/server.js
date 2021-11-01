@@ -1,9 +1,15 @@
 const path = require('path')
+const fs = require("fs");
 const express = require('express');
 const app = express();
+const generateUniqueId = require('generate-unique-id');
 const PORT = 3001;
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
+const note = require('./db/db.json');
+
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'))
@@ -16,6 +22,46 @@ app.get('/api/notes', (req, res) => {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/index.html'))
 });
+
+app.post('/api/notes', (req, res) => {
+  // res.send(req.body)
+  // console.log(req.body)
+  // notes.push(req.body)
+
+  const newNote = req.body;
+  newNote.id = generateUniqueId({
+    length: 4,
+    useLetters: false
+  });
+  console.log(newNote);
+  note.push(newNote);
+  res.json(newNote);
+  createNewNote(note);
+})
+
+
+function createNewNote(note) {
+  fs.writeFileSync(
+    path.join(__dirname, './db/db.json'),
+    JSON.stringify(note, null, 2)
+  );
+  return note;
+}
+
+// function createNewAnimal(body, animalsArray) {
+//   const animal = body;
+//   animalsArray.push(animal);
+//   fs.writeFileSync(
+//     path.join(__dirname, '../data/animals.json'),
+//     JSON.stringify({animals: animalsArray}, null, 2)
+//   );
+//   return animal;
+// }
+
+
+
+
+
 // app.get('/notes/:note', (req, res) => {
 //   const chosen = req.params.note;
 
@@ -45,3 +91,4 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`App listening on PORT ${PORT}`);
 });
+
