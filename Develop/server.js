@@ -1,10 +1,10 @@
+const express = require('express');
 const path = require('path')
 const fs = require("fs");
-const express = require('express');
 const app = express();
 const generateUniqueId = require('generate-unique-id');
 const PORT = 3001;
-const note = require('./db/db.json');
+let note = require('./db/db.json');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -21,6 +21,12 @@ app.get('/api/notes', (req, res) => {
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/index.html'))
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+  note = note.filter((selectedNote) => selectedNote.id !== req.params.id);
+  createNewNote(note);
+  res.json('note deleted');
 });
 
 app.post('/api/notes', (req, res) => {
