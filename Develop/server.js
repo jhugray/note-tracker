@@ -11,29 +11,31 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
+//loads the notes into the notes page
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 });
 
+//loads the json notes api
 app.get('/api/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/db/db.json'))
 });
 
+//loads the home page using wildcard
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/index.html'))
 });
 
+//deletes a note by it's id, and then saves the notes with the deleted note removed
 app.delete('/api/notes/:id', (req, res) => {
   note = note.filter((selectedNote) => selectedNote.id !== req.params.id);
-  createNewNote(note);
+  saveNoteJSON(note);
   res.json('note deleted');
 });
 
+//adds a note and assigns a unique id to every new note
 app.post('/api/notes', (req, res) => {
-  // res.send(req.body)
-  // console.log(req.body)
-  // notes.push(req.body)
-
+  
   const newNote = req.body;
   newNote.id = generateUniqueId({
     length: 4,
@@ -42,11 +44,11 @@ app.post('/api/notes', (req, res) => {
   console.log(newNote);
   note.push(newNote);
   res.json(newNote);
-  createNewNote(note);
+  saveNoteJSON(note);
 })
 
-
-function createNewNote(note) {
+// saves the json note
+function saveNoteJSON(note) {
   fs.writeFileSync(
     path.join(__dirname, './db/db.json'),
     JSON.stringify(note, null, 2)
@@ -54,47 +56,9 @@ function createNewNote(note) {
   return note;
 }
 
-// function createNewAnimal(body, animalsArray) {
-//   const animal = body;
-//   animalsArray.push(animal);
-//   fs.writeFileSync(
-//     path.join(__dirname, '../data/animals.json'),
-//     JSON.stringify({animals: animalsArray}, null, 2)
-//   );
-//   return animal;
-// }
-
-
-
-
-
-// app.get('/notes/:note', (req, res) => {
-//   const chosen = req.params.note;
-
-
-//   console.log(chosen);
-
-//   for (let i = 0; i < notes.length; i++) {
-//     if (chosen === notes[i].routeName) {
-//       return res.json(notes[i]);
-//     }
-//   }
-
-//   return res.json(false);
-// });
-
-// app.post('/notes', (req, res) => {
-//   const newNote = req.body;
-
-//   console.log(newNote);
-
-//   notes.push(newNote);
-
-//   res.json(newNote);
-// });
-
 
 app.listen(PORT, () => {
   console.log(`App listening on PORT ${PORT}`);
 });
+
 
