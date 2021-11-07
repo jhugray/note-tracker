@@ -24,3 +24,4 @@ https://note-tracker-by-jess.herokuapp.com/
 ## Contributions 
 
 Jess Hause Ugray, 2021
+Front end provided by Xander Rapstine with Trilogy Bootcamp, https://github.com/Xandromus
