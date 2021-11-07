@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require("fs");
 const app = express();
 const generateUniqueId = require('generate-unique-id');
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 let note = require('./db/db.json');
 
 app.use(express.static('public'));
